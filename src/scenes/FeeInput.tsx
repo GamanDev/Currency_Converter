@@ -50,45 +50,47 @@ const Input: FC<InputType> = ({
     onDeleteFee();
   }
   return (
-    <form onChange={onFormChange} className={styles.form}>
-      <input
-        className={styles.input}
-        type="number"
-        name="fee"
-        defaultValue={fee}
-        placeholder="Fee"
-        min={0}
-        max={1}
-        step={0.1}
-      />
+    <>
+      <form onChange={onFormChange} className={styles.form}>
+        <input
+          className={styles.input}
+          type="number"
+          name="fee"
+          defaultValue={fee}
+          placeholder="Fee"
+          min={0}
+          max={1}
+          step={0.1}
+        />
 
-      {/* USD JPY */}
+        {/* USD JPY */}
 
-      <select name="from" defaultValue={from} className={styles.select}>
-        {Object.keys(CurrencyRate)
-          .filter((option) => {
-            return option === from || ToFromUsed[to].has(option) === false;
-          })
-          .map((v) => {
-            return <option key={v} label={v} value={v} />;
-          })}
-      </select>
-      <select name="to" defaultValue={to} className={styles.select}>
-        {Object.keys(CurrencyRate)
-          .filter((option) => {
-            return option === to || FromToUsed[from].has(option) === false;
-          })
-          .map((v) => {
-            return <option key={v} label={v} value={v} />;
-          })}
-      </select>
-      <button onClick={onDeleteClick} className={styles.times}>
-        &times;
-      </button>
+        <select name="from" defaultValue={from} className={styles.select}>
+          {Object.keys(CurrencyRate)
+            .filter((option) => {
+              return option === from || ToFromUsed[to].has(option) === false;
+            })
+            .map((v) => {
+              return <option key={v} label={v} value={v} />;
+            })}
+        </select>
+        <select name="to" defaultValue={to} className={styles.select}>
+          {Object.keys(CurrencyRate)
+            .filter((option) => {
+              return option === to || FromToUsed[from].has(option) === false;
+            })
+            .map((v) => {
+              return <option key={v} label={v} value={v} />;
+            })}
+        </select>
+        <button onClick={onDeleteClick} className={styles.times}>
+          &times;
+        </button>
+      </form>
       {!isValid && (
         <div className={styles.error}>Please enter a valid amount</div>
       )}
-    </form>
+    </>
   );
 };
 
