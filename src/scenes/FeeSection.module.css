@@ -1,0 +1,16 @@
+.add {
+  margin-top: 20px;
+  padding: 10px;
+  width: 225px;
+  border: none;
+  background: blue;
+  color: white;
+  cursor: pointer;
+}
+
+.add:hover {
+  opacity: 0.85;
+}
+.add:active {
+  transform: scale(0.95);
+}
