@@ -25,7 +25,6 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     setState(items);
   }, [items, setState]);
 
-  // useMemo // reuse function
   items.forEach(({ from, to }) => {
     let used: any = FromToUsed[from];
     if (!used) {
@@ -35,7 +34,6 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     used.add(to);
   });
 
-  // useMemo
   items.forEach(({ from, to }) => {
     let used: any = ToFromUsed[to];
     if (!used) {
@@ -74,7 +72,7 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     items[i] = { fee, from, to };
     setItems([...items]);
   }
-  // fees.slice().splice(i,1)
+
   function onDeleteFee(i: number) {
     setItems([...items.filter((item) => item !== items[i])]);
   }

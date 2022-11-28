@@ -40,8 +40,6 @@ const Main: FC = () => {
     }
   }, [state, amount, fromCurrency, toCurrency, currencies, feeIsSet]);
 
-  console.log(result);
-
   if (isLoading) return <div>Loading ...</div>;
   if (error) return <div>{error}</div>;
   return (

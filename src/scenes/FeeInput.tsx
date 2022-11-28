@@ -63,8 +63,6 @@ const Input: FC<InputType> = ({
           step={0.1}
         />
 
-        {/* USD JPY */}
-
         <select name="from" defaultValue={from} className={styles.select}>
           {Object.keys(CurrencyRate)
             .filter((option) => {
