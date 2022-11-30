@@ -5,6 +5,7 @@ import styles from "./FeeInput.module.css";
 type InputType = {
   key?: string;
   onChange: (fee: number, from: string, to: string) => void;
+  onSwitchChange: (fee: number, from: string, to: string) => void;
   onDeleteFee: () => void;
   from: string;
   to: string;
@@ -23,6 +24,7 @@ const Input: FC<InputType> = ({
   CurrencyRate,
   ToFromUsed,
   onDeleteFee,
+  onSwitchChange,
 }) => {
   const [isValid, setIsValid] = useState(true);
 
@@ -49,6 +51,11 @@ const Input: FC<InputType> = ({
     e.preventDefault();
     onDeleteFee();
   }
+  function onSwitchClick(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    onSwitchChange(fee, from, to);
+  }
+
   return (
     <>
       <form onChange={onFormChange} className={styles.form}>
@@ -72,6 +79,9 @@ const Input: FC<InputType> = ({
               return <option key={v} label={v} value={v} />;
             })}
         </select>
+        <button onClick={onSwitchClick} className={styles.switch}>
+          <img src="/assets/reverse_arrows.svg" alt="reverse_arrows" />
+        </button>
         <select name="to" defaultValue={to} className={styles.select}>
           {Object.keys(CurrencyRate)
             .filter((option) => {

@@ -29,6 +29,10 @@
   cursor: pointer;
 }
 
+.switch {
+  cursor: pointer;
+}
+
 .times:hover {
   opacity: 0.7;
 }

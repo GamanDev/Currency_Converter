@@ -77,6 +77,16 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     setItems([...items.filter((item) => item !== items[i])]);
   }
 
+  function onSwitchChange(i: number, fee: number, from = "", to = "") {
+    let valid = items.find((item) => item.from === to && item.to === from);
+    console.log(valid);
+    if (!valid) {
+      let temp = items[i].from;
+      items[i] = { from: to, to: temp, fee };
+      setItems([...items]);
+    }
+  }
+
   return (
     <div>
       <Section title="Fee">
@@ -91,6 +101,9 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
               to={to}
               fee={fee}
               onChange={(fee, from, to) => onChange(i, fee, from, to)}
+              onSwitchChange={(fee, from, to) =>
+                onSwitchChange(i, fee, from, to)
+              }
               onDeleteFee={() => onDeleteFee(i)}
               FromToUsed={FromToUsed}
               ToFromUsed={ToFromUsed}
