@@ -1,36 +1,42 @@
 import React, { FC, FormEvent, MouseEvent } from "react";
+import { Used } from "./FeeSection";
 import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./ConverterInput.module.css";
 
 type ConverterInputType = {
   CurrencyRate: CurrencyRate;
-  setAmount: (amount: number) => void;
-  currency: { from: string; to: string };
-  setCurrency: (from: string, to: string) => void;
+  setAmount: React.Dispatch<React.SetStateAction<number>>;
+  currencyPair: { from: string; to: string };
+  setCurrencyPair: React.Dispatch<
+    React.SetStateAction<{
+      from: string;
+      to: string;
+    }>
+  >;
   onSwitchChange: (from: string, to: string) => void;
   // types
-  FromToUsed: any;
+  FromToUsed: Used;
   ToFromUsed: any;
 };
 
 const ConverterInput: FC<ConverterInputType> = ({
   CurrencyRate,
-  setAmount,
-  currency,
-  setCurrency,
-  onSwitchChange,
+  currencyPair,
   FromToUsed,
   ToFromUsed,
+  setAmount,
+  setCurrencyPair,
+  onSwitchChange,
 }) => {
   function onFormChange({ currentTarget }: FormEvent<HTMLFormElement>) {
     const { amount, from, to } = currentTarget;
-    setCurrency(from.value, to.value);
+    setCurrencyPair({ from: from.value, to: to.value });
     setAmount(amount.value);
   }
 
   function onSwitch(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    onSwitchChange(currency.from, currency.to);
+    onSwitchChange(currencyPair.from, currencyPair.to);
   }
 
   return (
@@ -41,12 +47,12 @@ const ConverterInput: FC<ConverterInputType> = ({
         placeholder="Amount"
         className={styles.input}
       />
-      <select name="from" className={styles.select} value={currency.from}>
+      <select name="from" className={styles.select} value={currencyPair.from}>
         {Object.keys(CurrencyRate)
           .filter((option) => {
             return (
-              option === currency.from ||
-              ToFromUsed[currency.to].has(option) === false
+              option === currencyPair.from ||
+              ToFromUsed[currencyPair.to].has(option) === false
             );
           })
           .map((v) => {
@@ -57,12 +63,12 @@ const ConverterInput: FC<ConverterInputType> = ({
         <img src="/assets/reverse_arrows.svg" alt="reverse_arrows" />
       </button>
       {/* onCurrencySwitch */}
-      <select name="to" className={styles.select} value={currency.to}>
+      <select name="to" className={styles.select} value={currencyPair.to}>
         {Object.keys(CurrencyRate)
           .filter((option) => {
             return (
-              option === currency.to ||
-              FromToUsed[currency.from].has(option) === false
+              option === currencyPair.to ||
+              FromToUsed[currencyPair.from].has(option) === false
             );
           })
           .map((v) => {

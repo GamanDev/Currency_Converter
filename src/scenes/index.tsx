@@ -11,7 +11,7 @@ const Main: FC = () => {
   const [items, setItems] = useState<ItemsType[]>([]);
   const [result, setResult] = useState(0);
   const [amount, setAmount] = useState(0);
-  const [currency, setCurrency] = useState({ from: "USD", to: "JPY" });
+  const [currencyPair, setCurrencyPair] = useState({ from: "USD", to: "JPY" });
 
   function countResult(
     amount: number,
@@ -25,19 +25,19 @@ const Main: FC = () => {
 
   useEffect(() => {
     const fee = items.find(
-      (pair) => pair.from === currency.from && pair.to === currency.to
+      (pair) => pair.from === currencyPair.from && pair.to === currencyPair.to
     );
 
     countResult(
       amount,
-      currencies[currency.from],
-      currencies[currency.to],
+      currencies[currencyPair.from],
+      currencies[currencyPair.to],
       fee && fee.fee
     );
-  }, [items, amount, currency.from, currency.to, currencies]);
+  }, [items, amount, currencyPair.from, currencyPair.to, currencies]);
 
   function onSwitchChange(from: string, to: string) {
-    setCurrency({ from: to, to: from });
+    setCurrencyPair({ from: to, to: from });
   }
 
   if (isLoading) return <div>Loading ...</div>;
@@ -55,11 +55,10 @@ const Main: FC = () => {
       <div>
         <ConverterSection
           CurrencyRate={currencies}
-          setAmount={(amount: number) => setAmount(amount)}
-          // setAmount={setAmount}
-          currency={currency}
-          setCurrency={(from, to) => setCurrency({ from, to })}
-          onSwitchChange={(from, to) => onSwitchChange(from, to)}
+          setAmount={setAmount}
+          currencyPair={currencyPair}
+          setCurrencyPair={setCurrencyPair}
+          onSwitchChange={onSwitchChange}
         />
         {!!result && <div className={styles.result}>Result: {result}</div>}
       </div>

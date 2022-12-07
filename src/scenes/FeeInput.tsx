@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
+import { Used } from "./FeeSection";
 import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./FeeInput.module.css";
-import { Used } from "./FeeSection";
 
 type InputType = {
   onChange: (fee: number, from: string, to: string) => void;
@@ -19,10 +19,10 @@ const Input: FC<InputType> = ({
   from,
   to,
   fee = 0,
-  onChange,
   FromToUsed,
   CurrencyRate,
   ToFromUsed,
+  onChange,
   onDeleteFee,
   onCurrencySwap,
 }) => {

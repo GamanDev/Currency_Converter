@@ -1,42 +1,45 @@
-import React, { FC } from "react";
-import Section from "../components/Section";
-import { CurrencyRate } from "../types/currencyTypes";
+import React, { FC, useMemo } from "react";
 import ConverterInput from "./ConverterInput";
+import { Used } from "./FeeSection";
+import { CurrencyRate } from "../types/currencyTypes";
+import Section from "../components/Section";
 
 type ConverterSectionType = {
   CurrencyRate: CurrencyRate;
-  setAmount: (amount: number) => void;
-  currency: { from: string; to: string };
-  setCurrency: (from: string, to: string) => void;
+  setAmount: React.Dispatch<React.SetStateAction<number>>;
+  currencyPair: { from: string; to: string };
+  setCurrencyPair: React.Dispatch<
+    React.SetStateAction<{
+      from: string;
+      to: string;
+    }>
+  >;
   onSwitchChange: (from: string, to: string) => void;
 };
 const ConverterSection: FC<ConverterSectionType> = ({
   CurrencyRate,
   setAmount,
-  setCurrency,
-  currency,
+  setCurrencyPair,
+  currencyPair,
   onSwitchChange,
 }) => {
-  // any => type
-  const FromToUsed: any = {};
-  const ToFromUsed: any = {};
+  const FromToUsed: Used = {};
+  const ToFromUsed: Used = {};
 
-  // ==========================================
-  // useMemo // function
-  let usedFrom = FromToUsed[currency.from];
-  if (!usedFrom) {
-    FromToUsed[currency.from] = new Set([currency.from]);
-    usedFrom = FromToUsed[currency.from];
-  }
-  usedFrom.add(currency.to);
-
-  let usedTo = ToFromUsed[currency.to];
-  if (!usedTo) {
-    ToFromUsed[currency.to] = new Set([currency.to]);
-    usedTo = ToFromUsed[currency.to];
-  }
-  usedTo.add(currency.from);
-  // ==========================================
+  const createSet = useMemo(
+    () => (first: string, second: string, obj: Used) => {
+      let used: Set<string> = obj[first];
+      if (!used) {
+        used = new Set([first]);
+        obj[first] = used;
+      }
+      used.add(second);
+    },
+    []
+  );
+  const { from, to } = currencyPair;
+  createSet(from, to, FromToUsed);
+  createSet(to, from, ToFromUsed);
 
   return (
     <Section title="Converter">
@@ -45,11 +48,10 @@ const ConverterSection: FC<ConverterSectionType> = ({
       </p>
       <ConverterInput
         CurrencyRate={CurrencyRate}
-        setAmount={(amount: number) => setAmount(amount)}
-        currency={currency}
-        setCurrency={(from, to) => setCurrency(from, to)}
-        onSwitchChange={(from, to) => onSwitchChange(from, to)}
-        // reference setCurrency, onSwitch change // not useRef!!!
+        currencyPair={currencyPair}
+        setAmount={setAmount}
+        setCurrencyPair={setCurrencyPair}
+        onSwitchChange={onSwitchChange}
         FromToUsed={FromToUsed}
         ToFromUsed={ToFromUsed}
       />
