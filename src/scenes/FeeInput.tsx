@@ -68,10 +68,10 @@ const Input: FC<InputType> = ({
           placeholder="Fee"
           min={0}
           max={1}
-          step={0.1}
+          step={0.01}
         />
 
-        <select name="from" defaultValue={from} className={styles.select}>
+        <select name="from" value={from} className={styles.select}>
           {Object.keys(CurrencyRate)
             .filter((option) => {
               return option === from || ToFromUsed[to].has(option) === false;
@@ -83,7 +83,7 @@ const Input: FC<InputType> = ({
         <button onClick={onSwitchClick} className={styles.switch}>
           <img src="/assets/reverse_arrows.svg" alt="reverse_arrows" />
         </button>
-        <select name="to" defaultValue={to} className={styles.select}>
+        <select name="to" value={to} className={styles.select}>
           {Object.keys(CurrencyRate)
             .filter((option) => {
               return option === to || FromToUsed[from].has(option) === false;

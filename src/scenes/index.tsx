@@ -9,10 +9,8 @@ import styles from "./index.module.css";
 const Main: FC = () => {
   const [currencies, isLoading, error] = useCurrencyFetch();
   const [items, setItems] = useState<ItemsType[]>([]);
-
   const [result, setResult] = useState(0);
   const [amount, setAmount] = useState(0);
-
   const [currency, setCurrency] = useState({ from: "USD", to: "JPY" });
 
   function countResult(
@@ -26,7 +24,6 @@ const Main: FC = () => {
   }
 
   useEffect(() => {
-    // feeIsSet name change
     const fee = items.find(
       (pair) => pair.from === currency.from && pair.to === currency.to
     );
@@ -36,7 +33,6 @@ const Main: FC = () => {
       currencies[currency.from],
       currencies[currency.to],
       fee && fee.fee
-      // feeIsSet?.fee
     );
   }, [items, amount, currency.from, currency.to, currencies]);
 
