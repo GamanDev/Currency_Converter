@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, MouseEvent } from "react";
+import React, { FC, FormEvent } from "react";
 import { Used } from "./FeeSection";
 import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./ConverterInput.module.css";
@@ -34,13 +34,16 @@ const ConverterInput: FC<ConverterInputType> = ({
     setAmount(amount.value);
   }
 
-  function onSwitch(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
+  function onSwitch() {
     onSwitchChange(currencyPair.from, currencyPair.to);
   }
 
   return (
-    <form onChange={onFormChange} className={styles.form}>
+    <form
+      onChange={onFormChange}
+      className={styles.form}
+      onSubmit={(e) => e.preventDefault()}
+    >
       <input
         type="number"
         name="amount"
