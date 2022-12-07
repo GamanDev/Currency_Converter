@@ -1,62 +1,75 @@
-import React, { FC, useState } from "react";
-import { Currency } from "../types/currencyTypes";
+import React, { FC, FormEvent, MouseEvent } from "react";
+import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./ConverterInput.module.css";
 
 type ConverterInputType = {
-  CurrencyRate: Currency;
-  setFromCurrency: (currency: string) => void;
-  setToCurrency: (currency: string) => void;
+  CurrencyRate: CurrencyRate;
   setAmount: (amount: number) => void;
+  currency: { from: string; to: string };
+  setCurrency: (from: string, to: string) => void;
+  onSwitchChange: (from: string, to: string) => void;
+  // types
+  FromToUsed: any;
+  ToFromUsed: any;
 };
 
 const ConverterInput: FC<ConverterInputType> = ({
   CurrencyRate,
-  setFromCurrency,
-  setToCurrency,
   setAmount,
+  currency,
+  setCurrency,
+  onSwitchChange,
+  FromToUsed,
+  ToFromUsed,
 }) => {
-  const [from, setFrom] = useState("USD");
-  const [to, setTo] = useState("JPY");
-
-  function onFormChange({ currentTarget }: any) {
+  function onFormChange({ currentTarget }: FormEvent<HTMLFormElement>) {
     const { amount, from, to } = currentTarget;
-    setFrom(from.value);
-    setTo(to.value);
-    setFromCurrency(from.value);
-    setToCurrency(to.value);
+    setCurrency(from.value, to.value);
     setAmount(amount.value);
   }
 
+  function onSwitch(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    onSwitchChange(currency.from, currency.to);
+  }
+
   return (
-    <div>
-      {" "}
-      <form onChange={onFormChange} className={styles.form}>
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          className={styles.input}
-        />
-        <select name="from" className={styles.select}>
-          {Object.keys(CurrencyRate)
-            .filter((option) => {
-              return option !== to;
-            })
-            .map((v) => {
-              return <option key={v} label={v} value={v} />;
-            })}
-        </select>
-        <select name="to" className={styles.select}>
-          {Object.keys(CurrencyRate)
-            .filter((option) => {
-              return option !== from;
-            })
-            .map((v) => {
-              return <option key={v} label={v} value={v} />;
-            })}
-        </select>
-      </form>
-    </div>
+    <form onChange={onFormChange} className={styles.form}>
+      <input
+        type="number"
+        name="amount"
+        placeholder="Amount"
+        className={styles.input}
+      />
+      <select name="from" className={styles.select} value={currency.from}>
+        {Object.keys(CurrencyRate)
+          .filter((option) => {
+            return (
+              option === currency.from ||
+              ToFromUsed[currency.to].has(option) === false
+            );
+          })
+          .map((v) => {
+            return <option key={v} label={v} value={v} />;
+          })}
+      </select>
+      <button onClick={onSwitch}>
+        <img src="/assets/reverse_arrows.svg" alt="reverse_arrows" />
+      </button>
+      {/* onCurrencySwitch */}
+      <select name="to" className={styles.select} value={currency.to}>
+        {Object.keys(CurrencyRate)
+          .filter((option) => {
+            return (
+              option === currency.to ||
+              FromToUsed[currency.from].has(option) === false
+            );
+          })
+          .map((v) => {
+            return <option key={v} label={v} value={v} />;
+          })}
+      </select>
+    </form>
   );
 };
 

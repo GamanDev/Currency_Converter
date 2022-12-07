@@ -1,46 +1,45 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useMemo } from "react";
 import Input from "./FeeInput";
 import Section from "../components/Section";
-import { Currency } from "../types/currencyTypes";
+import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./FeeSection.module.css";
 
 type FeeSectionType = {
-  CurrencyRate: Currency;
-  setState: (items: itemsType[]) => void;
+  CurrencyRate: CurrencyRate;
+  setItems: React.Dispatch<React.SetStateAction<ItemsType[]>>;
+  items: ItemsType[];
 };
 
-export type itemsType = {
+export type ItemsType = {
   from: string;
   to: string;
   fee: number;
 };
 
-const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
-  const [items, setItems] = useState<itemsType[]>([]);
+export type Used = {
+  [key: string]: Set<string>;
+};
 
-  const FromToUsed: any = {};
-  const ToFromUsed: any = {};
+const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setItems, items }) => {
+  const FromToUsed: Used = {};
+  const ToFromUsed: Used = {};
+  const defaultFee = 0.15;
 
-  useEffect(() => {
-    setState(items);
-  }, [items, setState]);
+  const createSet = useMemo(
+    () => (first: string, second: string, obj: Used) => {
+      let used: Set<string> = obj[first];
+      if (!used) {
+        used = new Set([first]);
+        obj[first] = used;
+      }
+      used.add(second);
+    },
+    []
+  );
 
   items.forEach(({ from, to }) => {
-    let used: any = FromToUsed[from];
-    if (!used) {
-      used = new Set([from]);
-      FromToUsed[from] = used;
-    }
-    used.add(to);
-  });
-
-  items.forEach(({ from, to }) => {
-    let used: any = ToFromUsed[to];
-    if (!used) {
-      used = new Set([to]);
-      ToFromUsed[to] = used;
-    }
-    used.add(from);
+    createSet(from, to, FromToUsed);
+    createSet(to, from, ToFromUsed);
   });
 
   function onAdd() {
@@ -59,7 +58,8 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
         return to;
       });
 
-      option = { fee: 0.15, from, to };
+      option = { fee: defaultFee, from, to };
+
       return true;
     });
 
@@ -68,7 +68,7 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     }
   }
 
-  function onChange(i: number, fee: number, from = "", to = "") {
+  function onChange(i: number, fee: number, from: string, to: string) {
     items[i] = { fee, from, to };
     setItems([...items]);
   }
@@ -77,45 +77,42 @@ const FeeSection: FC<FeeSectionType> = ({ CurrencyRate, setState }) => {
     setItems([...items.filter((item) => item !== items[i])]);
   }
 
-  function onSwitchChange(i: number, fee: number, from = "", to = "") {
-    let valid = items.find((item) => item.from === to && item.to === from);
-    console.log(valid);
-    if (!valid) {
-      let temp = items[i].from;
-      items[i] = { from: to, to: temp, fee };
-      setItems([...items]);
-    }
+  function onCurrencySwap(i: number, fee: number, from: string, to: string) {
+    const isPresent = items.some(
+      (item) => item.from === to && item.to === from
+    );
+
+    if (isPresent) return;
+
+    items[i] = { from: to, to: from, fee };
+    setItems([...items]);
   }
 
   return (
-    <div>
-      <Section title="Fee">
-        <div>
-          Please set a fee and direction <strong>(0.2 === 20%)</strong>
-        </div>
-        {items.map(({ from, to, fee }, i) => {
-          return (
-            <Input
-              key={from + to}
-              from={from}
-              to={to}
-              fee={fee}
-              onChange={(fee, from, to) => onChange(i, fee, from, to)}
-              onSwitchChange={(fee, from, to) =>
-                onSwitchChange(i, fee, from, to)
-              }
-              onDeleteFee={() => onDeleteFee(i)}
-              FromToUsed={FromToUsed}
-              ToFromUsed={ToFromUsed}
-              CurrencyRate={CurrencyRate}
-            />
-          );
-        })}
-        <button onClick={onAdd} className={styles.add}>
-          Add
-        </button>
-      </Section>
-    </div>
+    <Section title="Fee">
+      <div>
+        Please set a fee and direction <strong>(0.2 === 20%)</strong>
+      </div>
+      {items.map(({ from, to, fee }, i) => {
+        return (
+          <Input
+            key={from + to}
+            from={from}
+            to={to}
+            fee={fee}
+            onChange={(fee, from, to) => onChange(i, fee, from, to)}
+            onCurrencySwap={(fee, from, to) => onCurrencySwap(i, fee, from, to)}
+            onDeleteFee={() => onDeleteFee(i)}
+            FromToUsed={FromToUsed}
+            ToFromUsed={ToFromUsed}
+            CurrencyRate={CurrencyRate}
+          />
+        );
+      })}
+      <button onClick={onAdd} className={styles.add}>
+        Add
+      </button>
+    </Section>
   );
 };
 

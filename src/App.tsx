@@ -1,12 +1,11 @@
 import Main from "./scenes";
-import Nav from "./scenes/Nav";
 
 const App = () => {
   return (
-    <div>
-      <Nav />
+    <>
+      <h1>Bliminse Currency Converter</h1>
       <Main />
-    </div>
+    </>
   );
 };
 

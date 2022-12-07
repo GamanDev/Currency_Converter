@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Currency } from "../types/currencyTypes";
+import { CurrencyRate } from "../types/currencyTypes";
 
 export function useCurrencyFetch() {
-  const [currencies, setCurrencies] = useState<Currency>({});
+  const [currencies, setCurrencies] = useState<CurrencyRate>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -13,7 +13,7 @@ export function useCurrencyFetch() {
       .then((res) => res.text())
       .then((data) => {
         const xmlDoc = new DOMParser().parseFromString(data, "text/xml");
-        const CurencyRate: Currency = {};
+        const CurencyRate: CurrencyRate = {};
 
         Array.from(xmlDoc.querySelectorAll("Cube[currency]")).forEach((v) => {
           CurencyRate[v.getAttribute("currency") as string] = Number(

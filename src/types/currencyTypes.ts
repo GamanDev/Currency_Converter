@@ -1,3 +1,3 @@
-export type Currency = {
+export type CurrencyRate = {
   [currency: string]: number;
 };

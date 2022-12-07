@@ -1,18 +1,18 @@
-import React, { FC, MouseEvent, useState } from "react";
-import { Currency } from "../types/currencyTypes";
+import React, { FC, useState } from "react";
+import { CurrencyRate } from "../types/currencyTypes";
 import styles from "./FeeInput.module.css";
+import { Used } from "./FeeSection";
 
 type InputType = {
-  key?: string;
   onChange: (fee: number, from: string, to: string) => void;
-  onSwitchChange: (fee: number, from: string, to: string) => void;
+  onCurrencySwap: (fee: number, from: string, to: string) => void;
   onDeleteFee: () => void;
   from: string;
   to: string;
   fee: number;
-  FromToUsed?: any;
-  ToFromUsed?: any;
-  CurrencyRate: Currency;
+  FromToUsed: Used;
+  ToFromUsed: Used;
+  CurrencyRate: CurrencyRate;
 };
 
 const Input: FC<InputType> = ({
@@ -24,15 +24,17 @@ const Input: FC<InputType> = ({
   CurrencyRate,
   ToFromUsed,
   onDeleteFee,
-  onSwitchChange,
+  onCurrencySwap,
 }) => {
   const [isValid, setIsValid] = useState(true);
 
   function onFormChange({ currentTarget }: any) {
     const { fee, from, to } = currentTarget;
     let value = +fee.value;
+
     if (value < 0) value = 0;
     if (value > 1) value = 1;
+    // else if
     checkForValidNumber(fee.value);
     if (isValid) {
       onChange(value, from.value, to.value);
@@ -40,25 +42,24 @@ const Input: FC<InputType> = ({
   }
 
   function checkForValidNumber(num: number): void {
-    if (num < 0 || num > 1) {
-      setIsValid(false);
-      return;
-    }
-    setIsValid(true);
+    setIsValid(num < 0 || num > 1 ? false : true);
   }
 
-  function onDeleteClick(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
+  function onDeleteClick() {
     onDeleteFee();
   }
-  function onSwitchClick(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    onSwitchChange(fee, from, to);
+  function onSwitchClick() {
+    onCurrencySwap(fee, from, to);
   }
 
+  // Reuseable component => input, select, (composition)
   return (
     <>
-      <form onChange={onFormChange} className={styles.form}>
+      <form
+        onChange={onFormChange}
+        className={styles.form}
+        onSubmit={(e) => e.preventDefault()}
+      >
         <input
           className={styles.input}
           type="number"
